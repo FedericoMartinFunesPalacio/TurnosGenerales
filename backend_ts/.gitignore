@@ -3,8 +3,11 @@ dist
 .env
 *.db
 /src/generated
-/prisma7.config.ts
 /.claude
 /.windsurf
 /.agents
 skills-lock.json
+
+# Archivos subidos por usuarios (efimeros, no se commitean)
+/uploads/*
+!/uploads/.gitkeep

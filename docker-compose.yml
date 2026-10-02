@@ -1,25 +1,51 @@
 # =============================================
-# Docker Compose — Turnos Generales
+# Docker Compose — Turnos Generales (dev local)
 # =============================================
 #
-# Orchestrates two services:
-#   - backend_ts: Node/Express API (port 3000)
-#   - frontend:   Angular SPA via Nginx (port 80)
+# Servicios:
+#   - postgres:     Base de datos PostgreSQL (datos persistidos en un volume)
+#   - backend_ts:   API Node/Express (puerto 3000) — aplica migraciones al arrancar
+#   - frontend:     Angular via Nginx (puerto 80)
 #
-# Networks and volumes ensure services can
-# communicate and data persists across restarts.
+# Uso:
+#   docker compose up --build
+#
+# Los datos de la DB persisten en el volume `postgres-data`.
+# Para resetear la DB: docker compose down -v (borra los volumes)
 # =============================================
 
 services:
 
   # -------------------------------------------
+  # PostgreSQL — Base de datos
+  # -------------------------------------------
+  # Los datos viven en el volume `postgres-data`, asi sobreviven
+  # a `docker compose down` (solo se borran con `down -v`).
+  # -------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: turnos
+      POSTGRES_PASSWORD: turnos
+      POSTGRES_DB: turnosdb
+    ports:
+      # Expuesto en el host para correr prisma CLI / studio desde la maquina
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U turnos -d turnosdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - backend-net
+
+  # -------------------------------------------
   # Backend TypeScript (Express + Prisma)
   # -------------------------------------------
-  # - Builds from backend_ts/Dockerfile
-  # - Exposes port 3000 to the host
-  # - Two persistent volumes:
-  #   * db-data:       SQLite database (prisma/dev.db)
-  #   * uploads-data:  user-uploaded files (turno documents)
+  # Al arrancar ejecuta `prisma migrate deploy` (aplica migraciones
+  # pendientes) y despues levanta el server con node dist/index.js.
   # -------------------------------------------
   backend_ts:
     build:
@@ -27,13 +53,21 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
+    environment:
+      # URL de la DB apuntando al servicio `postgres` de esta misma compose.
+      # Dentro de la red de Docker, el hostname es el nombre del servicio.
+      DATABASE_URL: postgresql://turnos:turnos@postgres:5432/turnosdb
+      PORT: "3000"
+      CORS_ORIGINS: "http://localhost:4200"
+      # Credenciales de Gmail (opcionales: sin ellas no se envian emails)
+      EMAIL_USER: ${EMAIL_USER:-}
+      EMAIL_PASS: ${EMAIL_PASS:-}
+    depends_on:
+      postgres:
+        # Espera a que Postgres este listo antes de arrancar (sino migrate falla)
+        condition: service_healthy
     volumes:
-      # Persist the entire prisma/ directory so the SQLite
-      # database survives container recreation.
-      # Inside the container: /app/prisma/dev.db
-      # On the host: managed by Docker as a named volume.
-      - db-data:/app/prisma
-      # Persist uploaded files (documentos adjuntos de turnos)
+      # Archivos subidos (documentos de turnos)
       - uploads-data:/app/uploads
     networks:
       - backend-net
@@ -41,9 +75,8 @@ services:
   # -------------------------------------------
   # Frontend (Angular + Nginx)
   # -------------------------------------------
-  # - Builds Angular app, serves static files via Nginx
-  # - Nginx proxies /api/* and /uploads/* to backend_ts
-  # - No volumes needed (stateless static files)
+  # Nginx sirve los archivos estaticos y hace proxy de /api y /uploads
+  # hacia el backend.
   # -------------------------------------------
   frontend:
     build:
@@ -59,22 +92,17 @@ services:
 # =============================================
 # Named Volumes
 # =============================================
-# Named volumes are managed by Docker and survive
-# `docker compose down`. They are only removed
-# with `docker compose down -v` (the -v flag).
-# =============================================
 volumes:
-  # SQLite database — mounted at /app/prisma inside the container
-  db-data:
-  # Uploaded files — mounted at /app/uploads inside the container
+  # Datos de PostgreSQL — persisten entre reinicios
+  postgres-data:
+  # Archivos subidos (documentos de turnos)
   uploads-data:
 
 # =============================================
 # Networks
 # =============================================
-# A bridge network lets containers find each other
-# by service name (e.g. "backend_ts" resolves to
-# the backend container's IP).
+# Red bridge: los servicios se resuelven por nombre
+# (ej: `postgres` y `backend_ts` son hostnames dentro de la red).
 # =============================================
 networks:
   backend-net:

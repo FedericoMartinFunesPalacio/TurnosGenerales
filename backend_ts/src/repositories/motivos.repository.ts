@@ -1,10 +1,7 @@
 // Repository de Motivos
 // CRUD de motivos frecuentes por proveedor
-import { PrismaClient, Motivo } from "../generated/prisma/client.js";
-import { PrismaLibSql } from "@prisma/adapter-libsql";
-
-const adapter = new PrismaLibSql({ url: "file:./dev.db" });
-const prisma = new PrismaClient({ adapter });
+import { Motivo } from "../generated/prisma/client.js";
+import { prisma } from "../config/database.js";
 
 // Obtener un motivo por ID
 export async function findMotivoById(id: number): Promise<Motivo | null> {

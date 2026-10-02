@@ -1,11 +1,11 @@
-// Schema de Prisma para la DB SQLite
+// Schema de Prisma para PostgreSQL
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 // ==========================================

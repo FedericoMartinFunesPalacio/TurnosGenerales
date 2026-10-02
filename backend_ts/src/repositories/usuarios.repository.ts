@@ -1,9 +1,6 @@
-import { PrismaClient, Usuario } from "../generated/prisma/client.js";
-import { PrismaLibSql } from "@prisma/adapter-libsql";
+import { Usuario } from "../generated/prisma/client.js";
+import { prisma } from "../config/database.js";
 import { CreateUsuarioInput } from "../schemas/usuario.schema.js";
-
-const adapter = new PrismaLibSql({ url: "file:./dev.db" });
-const prisma = new PrismaClient({ adapter });
 
 const userSelect = {
   id: true,

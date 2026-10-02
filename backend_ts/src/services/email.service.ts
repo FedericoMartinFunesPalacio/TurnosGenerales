@@ -6,18 +6,30 @@
 import nodemailer from "nodemailer";
 import { getEnvVariable } from "../config/env.js";
 
-// Crear transporter de nodemailer con configuracion Gmail
-// Un "transporter" es el objeto que se encarga de enviar los emails
-const transporter = nodemailer.createTransport({
-  service: "gmail",                    // Usar Gmail como servicio SMTP
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,                       // TLS se negocia en la conexion
-  auth: {
-    user: getEnvVariable("EMAIL_USER"),     // Email del remitente
-    pass: getEnvVariable("EMAIL_PASS"),     // App Password de Google (16 caracteres)
-  },
-});
+// Transporter de nodemailer con configuracion Gmail.
+// Un "transporter" es el objeto que se encarga de enviar los emails.
+//
+// IMPORTANTE: se crea de forma LAZY (perezosa), es decir, solo cuando se
+// envia el primer email. Si se creara al importar el modulo, el server
+// crashearia al arrancar si EMAIL_USER/EMAIL_PASS no estan definidas.
+type Transporter = ReturnType<typeof nodemailer.createTransport>;
+let transporter: Transporter | null = null;
+
+function getTransporter(): Transporter {
+  if (!transporter) {
+    transporter = nodemailer.createTransport({
+      service: "gmail",                    // Usar Gmail como servicio SMTP
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,                       // TLS se negocia en la conexion
+      auth: {
+        user: getEnvVariable("EMAIL_USER"),     // Email del remitente
+        pass: getEnvVariable("EMAIL_PASS"),     // App Password de Google (16 caracteres)
+      },
+    });
+  }
+  return transporter;
+}
 
 // ==========================================
 // TIPOS DE EMAIL QUE SE ENVIAN
@@ -41,7 +53,7 @@ export async function enviarEmailTurnoAgendado(
     day: "numeric",
   });
 
-  await transporter.sendMail({
+  await getTransporter().sendMail({
     from: `"Turnos App" <${getEnvVariable("EMAIL_USER")}>`,
     to: emailProveedor,
     subject: `Nuevo turno agendado - ${fechaFormateada} ${turno.hora}`,
@@ -82,7 +94,7 @@ export async function enviarEmailTurnoConfirmado(
     day: "numeric",
   });
 
-  await transporter.sendMail({
+  await getTransporter().sendMail({
     from: `"Turnos App" <${getEnvVariable("EMAIL_USER")}>`,
     to: emailConsumidor,
     subject: `Turno confirmado - ${fechaFormateada} ${turno.hora}`,
@@ -123,7 +135,7 @@ export async function enviarEmailTurnoCancelado(
     day: "numeric",
   });
 
-  await transporter.sendMail({
+  await getTransporter().sendMail({
     from: `"Turnos App" <${getEnvVariable("EMAIL_USER")}>`,
     to: emailConsumidor,
     subject: `Turno cancelado - ${fechaFormateada} ${turno.hora}`,

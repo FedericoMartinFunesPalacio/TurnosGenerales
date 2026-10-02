@@ -19,10 +19,15 @@ export function getEnvVariable(key: string): string {
 // Si alguna variable es obligatoria y no esta definida, lanzamos un error al iniciar
 export const env = {
   // Puerto del servidor. Si no existe, usamos 3000 por defecto
+  // En Render, PORT lo provee la plataforma
   port: parseInt(process.env.PORT || "3000", 10),
 
-  // URL de conexion a la base de datos (definida en .env)
-  // Ejemplo SQLite: "file:./dev.db"
-  // Ejemplo PostgreSQL: "postgresql://user:password@localhost:5432/mydb"
-  databaseUrl: process.env.DATABASE_URL || "file:./dev.db",
+  // URL de conexion a PostgreSQL (OBLIGATORIA)
+  // Formato: "postgresql://user:password@host:5432/dbname"
+  // En Render viene del servicio de Base de Datos de Render
+  databaseUrl: getEnvVariable("DATABASE_URL"),
+
+  // Origenes permitidos por CORS (separados por coma)
+  // Ejemplo: "https://miusuario.github.io,http://localhost:4200"
+  corsOrigins: process.env.CORS_ORIGINS || "http://localhost:4200",
 };

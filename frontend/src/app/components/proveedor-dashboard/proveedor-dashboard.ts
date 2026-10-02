@@ -13,6 +13,7 @@ import { FormFieldComponent } from '../form-field/form-field';
 import { ButtonComponent } from '../button/button';
 import { ModalComponent } from '../modal/modal';
 import { EstadoLabelPipe } from '../../pipes/estado-label.pipe';
+import { enviroment } from '../../../env/enviroments';
 
 @Component({
   selector: 'app-proveedor-dashboard',
@@ -242,7 +243,9 @@ import { EstadoLabelPipe } from '../../pipes/estado-label.pipe';
 
   downloadDocumento(): void {
     if (!this.selectedTurno?.documentoUrl) return;
-    window.open(`http://localhost:3000${this.selectedTurno.documentoUrl}`, '_blank');
+    // apiOrigin es "" en local (el proxy/nginx resuelve /uploads) y la
+    // URL de Render en GitHub Pages.
+    window.open(`${enviroment.apiOrigin}${this.selectedTurno.documentoUrl}`, '_blank');
   }
 
   formatDate(dateStr: string): string {

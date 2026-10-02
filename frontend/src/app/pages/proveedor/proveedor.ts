@@ -32,7 +32,11 @@ export class ProveedorPage implements OnInit {
   }
 
   copyShareLink(): void {
-    const url = `${window.location.origin}/calendario/${this.currentUser.id}`;
+    // window.location.href sin la parte "#" es la URL base del sitio
+    // (incluye /TurnosGenerales/ cuando corre en GitHub Pages).
+    // Con hash location la ruta publica es base + #/calendario/<id>.
+    const baseUrl = window.location.href.split('#')[0];
+    const url = `${baseUrl}#/calendario/${this.currentUser.id}`;
     navigator.clipboard.writeText(url).then(() => {
       this.linkCopied = true;
       setTimeout(() => this.linkCopied = false, 2500);

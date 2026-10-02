@@ -1,11 +1,8 @@
 // Repository de Turnos
 // Capa de acceso a datos - ejecuta queries SQL a traves de Prisma Client
-import { PrismaClient, Turno } from "../generated/prisma/client.js";
-import { PrismaLibSql } from "@prisma/adapter-libsql";
+import { Turno } from "../generated/prisma/client.js";
+import { prisma } from "../config/database.js";
 import { CreateTurnoInput, UpdateTurnoInput } from "../schemas/turno.schema.js";
-
-const adapter = new PrismaLibSql({ url: "file:./dev.db" });
-const prisma = new PrismaClient({ adapter });
 
 // ==========================================
 // QUERIES DE LECTURA
