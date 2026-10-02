@@ -6,9 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.management.relation.Role;
 
-@Entity(name = "User")
+@Entity(name = "usser")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,6 +29,7 @@ public class UserEntity {
     @Column(nullable = false)
     private String phone;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role;
+    private Roles role;
 }

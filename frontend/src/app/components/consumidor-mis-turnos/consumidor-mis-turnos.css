@@ -1,0 +1,24 @@
+.filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.turno-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  transition: background 150ms ease;
+}
+
+.turno-item:hover { background: var(--surface-2); }
+
+.turno-info { flex: 1; display: flex; flex-direction: column; gap: 0.25rem; }
+.turno-main { display: flex; align-items: center; gap: 0.5rem; }
+.turno-motivo { font-weight: var(--font-weight-semibold); color: var(--text-primary); }
+.turno-fecha { font-size: var(--text-sm); color: var(--text-secondary); }
+.turno-actions { display: flex; gap: 0.5rem; }

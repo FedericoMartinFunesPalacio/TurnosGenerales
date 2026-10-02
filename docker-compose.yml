@@ -1,29 +1,50 @@
-version: '3.8'
+# =============================================
+# Docker Compose — Turnos Generales
+# =============================================
+#
+# Orchestrates two services:
+#   - backend_ts: Node/Express API (port 3000)
+#   - frontend:   Angular SPA via Nginx (port 80)
+#
+# Networks and volumes ensure services can
+# communicate and data persists across restarts.
+# =============================================
+
 services:
-  app-service:
+
+  # -------------------------------------------
+  # Backend TypeScript (Express + Prisma)
+  # -------------------------------------------
+  # - Builds from backend_ts/Dockerfile
+  # - Exposes port 3000 to the host
+  # - Two persistent volumes:
+  #   * db-data:       SQLite database (prisma/dev.db)
+  #   * uploads-data:  user-uploaded files (turno documents)
+  # -------------------------------------------
+  backend_ts:
     build:
-      context: ./backend/app-service
+      context: ./backend_ts
       dockerfile: Dockerfile
     ports:
-      - "8081:8081"
-    environment:
-      - SPRING_PROFILES_ACTIVE=prod
+      - "3000:3000"
+    volumes:
+      # Persist the entire prisma/ directory so the SQLite
+      # database survives container recreation.
+      # Inside the container: /app/prisma/dev.db
+      # On the host: managed by Docker as a named volume.
+      - db-data:/app/prisma
+      # Persist uploaded files (documentos adjuntos de turnos)
+      - uploads-data:/app/uploads
     networks:
       - backend-net
 
-  api-gateway:
-    build:
-      context: ./backend/api-gateway
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    environment:
-      - SPRING_PROFILES_ACTIVE=prod
-    depends_on:
-      - app-service
-    networks:
-      - backend-net
-
+  # -------------------------------------------
+  # Frontend (Angular + Nginx)
+  # -------------------------------------------
+  # - Builds Angular app, serves static files via Nginx
+  # - Nginx proxies /api/* and /uploads/* to backend_ts
+  # - No volumes needed (stateless static files)
+  # -------------------------------------------
   frontend:
     build:
       context: ./frontend
@@ -31,11 +52,30 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - api-gateway
+      - backend_ts
     networks:
       - backend-net
 
+# =============================================
+# Named Volumes
+# =============================================
+# Named volumes are managed by Docker and survive
+# `docker compose down`. They are only removed
+# with `docker compose down -v` (the -v flag).
+# =============================================
+volumes:
+  # SQLite database — mounted at /app/prisma inside the container
+  db-data:
+  # Uploaded files — mounted at /app/uploads inside the container
+  uploads-data:
+
+# =============================================
+# Networks
+# =============================================
+# A bridge network lets containers find each other
+# by service name (e.g. "backend_ts" resolves to
+# the backend container's IP).
+# =============================================
 networks:
   backend-net:
     driver: bridge
-

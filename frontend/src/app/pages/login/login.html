@@ -1,0 +1,69 @@
+<div class="page-container flex items-center justify-center" #container>
+  <app-card>
+    <div class="login-header">
+      <mat-icon class="logo-icon">schedule</mat-icon>
+      <h1>Turnos</h1>
+      <p>Sistema de gestion de turnos</p>
+    </div>
+
+    <mat-tab-group animationDuration="200ms">
+      <!-- TAB: Login -->
+      <mat-tab label="Iniciar Sesion">
+        <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="tab-content">
+          <app-form-field label="Email" [control]="loginForm.get('email')!" type="email" placeholder="tu@email.com">
+            <span error>Email invalido</span>
+          </app-form-field>
+
+          <app-form-field label="Contraseña" [control]="loginForm.get('password')!" type="password" placeholder="Tu contraseña">
+            <span error>La contraseña es obligatoria</span>
+          </app-form-field>
+
+          <app-alert type="error" [message]="loginError"></app-alert>
+
+          <app-button variant="primary" [disabled]="loginForm.invalid" (clicked)="onLogin()">
+            Entrar
+          </app-button>
+        </form>
+      </mat-tab>
+
+      <!-- TAB: Registro -->
+      <mat-tab label="Registrarse">
+        <form [formGroup]="registerForm" (ngSubmit)="onRegister()" class="tab-content">
+          <app-form-field label="Nombre" [control]="registerForm.get('nombre')!" placeholder="Tu nombre">
+            <span error>Min. 2 caracteres</span>
+          </app-form-field>
+
+          <app-form-field label="Apellidos" [control]="registerForm.get('apellidos')!" placeholder="Tus apellidos">
+            <span error>Min. 2 caracteres</span>
+          </app-form-field>
+
+          <app-form-field label="Email" [control]="registerForm.get('email')!" type="email" placeholder="tu@email.com">
+            <span error>Ingrese un email valido</span>
+          </app-form-field>
+
+          <app-form-field label="Telefono" [control]="registerForm.get('phone')!" placeholder="Solo numeros, min. 8 digitos">
+            <span error>Min. 8 digitos</span>
+          </app-form-field>
+
+          <app-form-field label="Contraseña" [control]="registerForm.get('password')!" type="password" placeholder="Minimo 6 caracteres">
+            <span error>Minimo 6 caracteres</span>
+          </app-form-field>
+
+          <div class="field">
+            <label>Rol</label>
+            <select formControlName="role">
+              <option value="CONSUMIDOR">Consumidor</option>
+              <option value="PROVEEDOR">Proveedor</option>
+            </select>
+          </div>
+
+          <app-alert type="error" [message]="registerError"></app-alert>
+
+          <app-button variant="primary" [disabled]="registerForm.invalid" (clicked)="onRegister()">
+            Crear Cuenta
+          </app-button>
+        </form>
+      </mat-tab>
+    </mat-tab-group>
+  </app-card>
+</div>

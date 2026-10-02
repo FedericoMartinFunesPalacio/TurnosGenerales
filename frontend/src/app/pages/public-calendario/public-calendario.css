@@ -1,0 +1,458 @@
+:host { display: block; }
+
+.public-page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+/* ==========================================
+   BANNER LOGIN/REGISTRO
+   ========================================== */
+
+.login-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, var(--surface-1), var(--surface-2));
+  border: 1px solid var(--border-default);
+  border-radius: 14px;
+}
+
+.banner-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.banner-text {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.banner-text mat-icon {
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+.banner-title {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.banner-subtitle {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 1px;
+}
+
+.banner-benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-left: 32px;
+}
+
+.benefit {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.benefit mat-icon {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  color: var(--state-success);
+  flex-shrink: 0;
+}
+
+/* ==========================================
+   HEADER
+   ========================================== */
+
+.public-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.header-icon {
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+  color: var(--text-secondary);
+}
+
+.public-header h1 {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.public-header p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 2px 0 0;
+}
+
+/* Calendar */
+.calendar-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.calendar-month {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.weekday {
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 0;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-family: var(--font-mono);
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+/* Slots */
+.turnos-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.turno-slot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.turno-slot:hover {
+  background: var(--surface-2);
+  border-color: var(--border-strong);
+}
+
+.slot-icon {
+  color: var(--text-secondary);
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.slot-info { flex: 1; }
+
+.slot-time {
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
+
+.slot-arrow {
+  color: var(--text-tertiary);
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--text-secondary);
+}
+
+.empty-icon {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  color: var(--text-tertiary);
+  margin-bottom: 8px;
+}
+
+.empty-state p { margin: 0; font-size: 0.9rem; }
+
+/* Booking */
+.booking-content {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.booking-summary {
+  background: var(--surface-1);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.summary-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.summary-row mat-icon {
+  color: var(--text-secondary);
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.summary-time {
+  font-size: 1.15rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
+
+.summary-date {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-left: auto;
+}
+
+/* Form sections */
+.booking-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.section-label mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  color: var(--text-secondary);
+}
+
+.motivo-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.motivo-option {
+  padding: 8px 14px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-default);
+  border-radius: 20px;
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.motivo-option:hover {
+  background: var(--surface-2);
+  border-color: var(--border-focus);
+}
+
+.motivo-option.selected {
+  background: var(--accent);
+  color: var(--text-on-accent);
+  border-color: var(--accent);
+}
+
+.form-row {
+  display: flex;
+  gap: 8px;
+}
+
+.form-input {
+  flex: 1;
+  padding: 10px 12px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-default);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.form-input:focus {
+  border-color: var(--border-focus);
+}
+
+.form-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* File */
+.file-hint {
+  font-size: 0.7rem;
+  color: var(--text-tertiary);
+  margin-bottom: 6px;
+}
+
+.file-upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 20px 12px;
+  border: 2px dashed var(--border-default);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  color: var(--text-secondary);
+}
+
+.file-upload-area:hover {
+  border-color: var(--text-secondary);
+  background: var(--surface-1);
+}
+
+.file-upload-area mat-icon { font-size: 28px; width: 28px; height: 28px; }
+.file-upload-area span { font-size: 0.8rem; }
+
+.file-selected {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--surface-1);
+  border: 1px solid var(--border-default);
+  border-radius: 10px;
+}
+
+.file-icon { color: var(--text-secondary); }
+
+.file-name {
+  flex: 1;
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-remove {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  display: flex;
+  transition: all 0.15s ease;
+}
+
+.file-remove:hover { background: var(--surface-3); color: var(--state-error); }
+
+.booking-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Responsive */
+@media (max-width: 600px) {
+  .login-banner {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .banner-text {
+    justify-content: center;
+  }
+
+  .banner-benefits {
+    padding-left: 0;
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .public-page { padding: 16px 12px; }
+
+  .public-header h1 { font-size: 1.2rem; }
+
+  .calendar-day { font-size: 0.75rem; border-radius: 6px; }
+
+  .form-row { flex-direction: column; }
+
+  .booking-actions {
+    flex-direction: column-reverse;
+  }
+
+  .booking-actions app-button { width: 100%; }
+}

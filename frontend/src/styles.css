@@ -1,7 +1,227 @@
-/* You can add global styles to this file, and also import other style files */
+@import './variables.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* ==========================================
+   RESET GLOBAL
+   ========================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==========================================
+   ANGULAR MATERIAL - OVERRIDE DARK THEME
+   ========================================== */
+
+/* Cards de Material */
+.mat-mdc-card {
+  background-color: var(--surface-card) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-lg) !important;
+  color: var(--text-primary) !important;
+}
+
+.mat-mdc-card:hover {
+  border-color: var(--border-default) !important;
+}
+
+/* Form Fields */
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+.mat-mdc-text-field-wrapper {
+  background-color: var(--surface-input) !important;
+}
+
+.mat-mdc-form-field-focus-overlay {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* Input */
+.mat-mdc-input-element {
+  color: var(--text-primary) !important;
+  caret-color: var(--text-secondary) !important;
+}
+
+.mdc-text-field--outlined .mdc-notched-outline__leading,
+.mdc-text-field--outlined .mdc-notched-outline__trailing,
+.mdc-text-field--outlined .mdc-notched-outline__notch {
+  border-color: var(--border-default) !important;
+}
+
+.mdc-text-field--outlined:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-notched-outline__leading,
+.mdc-text-field--outlined:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-notched-outline__trailing,
+.mdc-text-field--outlined:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-notched-outline__notch {
+  border-color: var(--border-focus) !important;
+}
+
+.mat-mdc-form-field-focus-overlay {
+  background-color: transparent !important;
+}
+
+/* Label */
+.mat-mdc-floating-label {
+  color: var(--text-muted) !important;
+}
+
+.mdc-text-field--focused .mat-mdc-floating-label {
+  color: var(--text-secondary) !important;
+}
+
+/* Buttons */
+.mat-mdc-button,
+.mat-mdc-raised-button,
+.mat-mdc-fab,
+.mat-mdc-mini-fab {
+  --mdc-text-button-label-text-color: var(--text-primary);
+  --mdc-filled-button-container-color: var(--surface-3);
+  --mdc-filled-button-label-text-color: var(--text-primary);
+  --mdc-outlined-button-label-text-color: var(--text-secondary);
+  border-radius: var(--radius-md) !important;
+}
+
+.mat-mdc-button:hover,
+.mat-mdc-raised-button:hover {
+  background-color: var(--bg-hover) !important;
+}
+
+/* Tabs */
+.mat-mdc-tab-group {
+  --mat-tab-header-active-focus-label-text-color: var(--text-primary);
+  --mat-tab-header-active-hover-label-text-color: var(--text-primary);
+  --mat-tab-header-active-label-text-color: var(--text-primary);
+  --mat-tab-header-inactive-label-text-color: var(--text-muted);
+  --mat-tab-header-active-focus-indicator-color: var(--text-primary);
+  --mat-tab-header-active-hover-indicator-color: var(--text-primary);
+  --mat-tab-header-active-indicator-color: var(--text-primary);
+  --mat-tab-body-active-body-label-color: var(--text-primary);
+  --mat-tab-body-inactive-body-label-color: var(--text-muted);
+  --mat-tab-group-divider-color: var(--border-subtle);
+}
+
+.mat-mdc-tab {
+  color: var(--text-secondary) !important;
+}
+
+.mat-mdc-tab.mdc-tab--active {
+  color: var(--text-primary) !important;
+}
+
+/* List */
+.mat-mdc-list-item {
+  color: var(--text-primary) !important;
+}
+
+.mdc-list-item__primary-text {
+  color: var(--text-primary) !important;
+}
+
+.mdc-list-item__secondary-text {
+  color: var(--text-secondary) !important;
+}
+
+/* Expansion Panel */
+.mat-expansion-panel {
+  background-color: var(--surface-card) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-lg) !important;
+  color: var(--text-primary) !important;
+}
+
+.mat-expansion-panel-header {
+  color: var(--text-primary) !important;
+}
+
+.mat-expansion-panel-header-title {
+  color: var(--text-primary) !important;
+}
+
+.mat-expansion-panel-header-description {
+  color: var(--text-secondary) !important;
+}
+
+/* Datepicker */
+.mat-datepicker-content {
+  background-color: var(--surface-2) !important;
+  color: var(--text-primary) !important;
+}
+
+.mat-calendar {
+  background-color: var(--surface-2) !important;
+  color: var(--text-primary) !important;
+}
+
+.mat-calendar-body-cell {
+  color: var(--text-primary) !important;
+}
+
+.mat-calendar-body-label {
+  color: var(--text-secondary) !important;
+}
+
+.mat-datepicker-toggle {
+  color: var(--text-secondary) !important;
+}
+
+/* Icon */
+.mat-icon {
+  color: inherit;
+}
+
+/* Divider */
+.mat-divider {
+  border-color: var(--border-subtle) !important;
+}
+
+/* Select */
+.mat-mdc-select-value {
+  color: var(--text-primary) !important;
+}
+
+.mat-mdc-select-arrow {
+  color: var(--text-secondary) !important;
+}
+
+.mdc-list-item__text {
+  color: var(--text-primary) !important;
+}
+
+/* ==========================================
+   SCROLLBAR GLOBAL
+   ========================================== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}

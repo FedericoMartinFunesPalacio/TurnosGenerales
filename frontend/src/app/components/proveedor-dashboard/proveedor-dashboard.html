@@ -1,0 +1,175 @@
+<!-- Crear turno -->
+<app-card title="Crear nuevo turno">
+  <form [formGroup]="turnoForm" (ngSubmit)="onCreateTurno()" class="form-grid">
+    <app-form-field label="Fecha" [control]="turnoForm.get('dia')!" type="date"></app-form-field>
+    <app-form-field label="Hora" [control]="turnoForm.get('hora')!" placeholder="14:30" hint="Formato HH:mm"></app-form-field>
+
+    <!-- Campo de motivos tag-style -->
+    <div class="motivos-field">
+      <label class="motivos-label">Motivos del turno</label>
+      <div class="tag-input-container" (click)="showSuggestions = true">
+        @for (motivo of motivosSeleccionados; track motivo) {
+          <span class="tag">
+            {{ motivo }}
+            <button type="button" class="tag-remove" (click)="removeMotivo(motivo); $event.stopPropagation()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </span>
+        }
+        <input
+          class="tag-input"
+          type="text"
+          [(ngModel)]="motivoInput"
+          [ngModelOptions]="{standalone: true}"
+          [placeholder]="motivosSeleccionados.length === 0 ? 'Ej: Limpieza, Tapizado...' : ''"
+          (keydown)="onMotivoKeydown($event)"
+          (focus)="showSuggestions = true"
+          (blur)="onMotivoBlur()"
+          maxlength="255">
+      </div>
+      @if (showSuggestions && getFilteredSuggestions().length > 0) {
+        <div class="suggestions-dropdown">
+          @for (s of getFilteredSuggestions(); track s.id) {
+            <button type="button" class="suggestion-item" (mousedown)="addMotivo(s.texto)">
+              <mat-icon>add</mat-icon>
+              {{ s.texto }}
+              <span class="suggestion-count">{{ s.usageCount }}x</span>
+            </button>
+          }
+        </div>
+      }
+      <span class="motivos-hint">Presione Enter para agregar.</span>
+    </div>
+
+    <div class="form-actions">
+      <app-button variant="primary" [disabled]="turnoForm.invalid" (clicked)="onCreateTurno()">Crear Turno</app-button>
+      <div class="form-alert-inline">
+        @if (formError) {
+          <span class="alert-inline alert-error">
+            <mat-icon>error</mat-icon>
+            {{ formError }}
+          </span>
+        }
+        @if (formSuccess) {
+          <span class="alert-inline alert-success">
+            <mat-icon>check_circle</mat-icon>
+            {{ formSuccess }}
+          </span>
+        }
+      </div>
+    </div>
+  </form>
+</app-card>
+
+<!-- MODAL: Lista de turnos -->
+<app-modal [open]="showTurnosModal" [title]="isHistorial ? 'Historial de turnos' : 'Mis turnos'" maxWidth="650px" (closed)="closeTurnosModal()">
+  @if (turnos.length > 0) {
+    <div class="turnos-table" #turnosList>
+      <div class="table-header">
+        <span class="col-fecha">Fecha</span>
+        <span class="col-hora">Hora</span>
+        <span class="col-motivos">Motivos</span>
+        <span class="col-estado">Estado</span>
+        <span class="col-acciones"></span>
+      </div>
+      @for (turno of turnos; track turno.id) {
+        <div class="turno-row" [style.border-left]="getBorderLeft(turno.estado)">
+          <span class="col-fecha">{{ formatDate(turno.dia) }}</span>
+          <span class="col-hora">{{ turno.hora }}</span>
+          <span class="col-motivos">{{ getTurnoMotivos(turno) }}</span>
+          <span class="col-estado">
+            <span class="badge badge-sm" [class]="getEstadoBadge(turno.estado)">{{ turno.estado | estadoLabel }}</span>
+          </span>
+          <span class="col-acciones">
+            @if (turno.estado === 'POR_CONFIRMAR') {
+              <button class="icon-btn icon-btn-success" title="Confirmar" (click)="onConfirmar(turno)">
+                <mat-icon>check</mat-icon>
+              </button>
+              <button class="icon-btn icon-btn-danger" title="Cancelar" (click)="onCancelar(turno)">
+                <mat-icon>close</mat-icon>
+              </button>
+            }
+            @if (turno.estado !== 'POR_CONFIRMAR') {
+              <button class="icon-btn icon-btn-ghost" title="Eliminar" (click)="onDelete(turno)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            }
+            @if (turno.estado !== 'DISPONIBLE') {
+              <button class="icon-btn icon-btn-info" title="Detalle" (click)="openDetail(turno)">
+                <mat-icon>info</mat-icon>
+              </button>
+            }
+          </span>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">{{ isHistorial ? 'history' : 'event_busy' }}</mat-icon>
+      <p>{{ isHistorial ? 'No hay turnos en el historial' : 'No hay turnos activos' }}</p>
+    </div>
+  }
+</app-modal>
+
+<!-- MODAL: Detalle del turno -->
+<app-modal [open]="showDetailModal" title="Detalle del turno" maxWidth="480px" (closed)="closeDetailModal()">
+  @if (selectedTurno) {
+    <div class="detail-content">
+      <div class="detail-section">
+        <div class="detail-label">Turno</div>
+        <div class="detail-row">
+          <mat-icon>schedule</mat-icon>
+          <span class="detail-time">{{ selectedTurno.hora }}</span>
+          <span class="detail-date">{{ formatDate(selectedTurno.dia) }}</span>
+        </div>
+        @if (selectedTurno.motivoSeleccionado) {
+          <div class="detail-row">
+            <mat-icon>edit_note</mat-icon>
+            <span>{{ selectedTurno.motivoSeleccionado }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-label">Consumidor</div>
+        <div class="detail-row">
+          <mat-icon>person</mat-icon>
+          <span>{{ selectedTurno.fullName || 'Sin nombre' }}</span>
+        </div>
+        <div class="detail-row">
+          <mat-icon>email</mat-icon>
+          <span>{{ selectedTurno.email || 'Sin email' }}</span>
+        </div>
+        <div class="detail-row">
+          <mat-icon>phone</mat-icon>
+          <span>{{ selectedTurno.phone || 'Sin telefono' }}</span>
+        </div>
+        @if (selectedTurno.dni) {
+          <div class="detail-row">
+            <mat-icon>badge</mat-icon>
+            <span>DNI: {{ selectedTurno.dni }}</span>
+          </div>
+        }
+      </div>
+
+      @if (selectedTurno.documentoUrl) {
+        <div class="detail-section">
+          <div class="detail-label">Documento adjunto</div>
+          <div class="detail-doc">
+            <mat-icon>description</mat-icon>
+            <span>Documento cargado por el consumidor</span>
+            <app-button variant="secondary" size="sm" (clicked)="downloadDocumento()">
+              <mat-icon style="font-size:14px;width:14px;height:14px;">download</mat-icon>
+              Ver
+            </app-button>
+          </div>
+        </div>
+      }
+
+      <div class="detail-section">
+        <div class="detail-label">Estado</div>
+        <span class="badge badge-lg" [class]="getEstadoBadge(selectedTurno.estado)">{{ selectedTurno.estado | estadoLabel }}</span>
+      </div>
+    </div>
+  }
+</app-modal>

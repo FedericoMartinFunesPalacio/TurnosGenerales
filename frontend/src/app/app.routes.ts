@@ -1,9 +1,14 @@
 import { Routes } from '@angular/router';
-import { PrincipalDummyComponent } from './pages/principal-dummy-component/principal-dummy-component';
-
+import { LoginComponent } from './pages/login/login';
+import { ProveedorPage } from './pages/proveedor/proveedor';
+import { ConsumidorPage } from './pages/consumidor/consumidor';
+import { PublicCalendarioComponent } from './pages/public-calendario/public-calendario';
 
 export const routes: Routes = [
-  { path: '', component: PrincipalDummyComponent, pathMatch: 'full' },
-  // Redirigir cualquier otra ruta a la página principal
-  { path: '**', redirectTo: '' }
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
+  { path: 'proveedor', component: ProveedorPage },
+  { path: 'consumidor', component: ConsumidorPage },
+  { path: 'calendario/:proveedorId', component: PublicCalendarioComponent },
+  { path: '**', redirectTo: 'login' },
 ];

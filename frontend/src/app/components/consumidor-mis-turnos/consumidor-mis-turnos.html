@@ -1,0 +1,36 @@
+<!-- Filtros -->
+<div class="filters">
+  @for (f of filters; track f.value) {
+    <app-button
+      [variant]="activeFilter === f.value ? 'primary' : 'secondary'"
+      size="sm"
+      (clicked)="activeFilter = f.value; filterTurnos()">
+      {{ f.label }} ({{ getCountByFilter(f.value) }})
+    </app-button>
+  }
+</div>
+
+<!-- Lista de turnos -->
+<app-list [items]="filteredTurnos" emptyMessage="No hay turnos para mostrar">
+  <div #listContainer>
+    @for (turno of filteredTurnos; track turno.id) {
+      <div class="turno-item list-item" [style.border-left]="getBorderLeft(turno.estado)">
+        <div class="turno-info">
+          <div class="turno-main">
+            <span class="turno-motivo">{{ turno.motivoSeleccionado }}</span>
+            <span class="badge" [class]="getEstadoBadge(turno.estado)">{{ turno.estado | estadoLabel }}</span>
+          </div>
+          <span class="turno-fecha">{{ formatDate(turno.dia) }} a las {{ turno.hora }}</span>
+        </div>
+        <div class="turno-actions">
+          @if (turno.estado === 'CONFIRMADO') {
+            <app-button variant="primary" size="sm" (clicked)="downloadComprobante(turno)">
+              <mat-icon style="font-size:16px;width:16px;height:16px;">description</mat-icon>
+              Comprobante
+            </app-button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</app-list>

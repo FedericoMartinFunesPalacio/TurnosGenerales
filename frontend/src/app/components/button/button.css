@@ -1,0 +1,58 @@
+:host { display: inline-block; }
+
+.btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover lift */
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+/* Click ripple */
+.btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.97);
+}
+
+/* Shine effect on hover */
+.btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 40%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.08),
+    transparent
+  );
+  transform: skewX(-20deg);
+  transition: left 0.5s ease;
+  pointer-events: none;
+}
+
+.btn:hover::after {
+  left: 120%;
+}
+
+/* Disabled */
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Primary glow */
+.btn-primary:not(:disabled):hover {
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.08);
+}
+
+/* Focus ring */
+.btn:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}

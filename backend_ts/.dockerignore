@@ -1,0 +1,31 @@
+# =============================================
+# .dockerignore — Backend TypeScript
+# =============================================
+#
+# Excludes files from the Docker build context.
+# This speeds up builds and prevents leaking
+# sensitive data (like .env or database files).
+# =============================================
+
+# Dependencies — rebuilt inside the container via npm ci
+node_modules
+
+# Compiled output — rebuilt inside the container via tsc
+dist
+
+# Environment variables — passed at runtime via docker-compose
+.env
+
+# SQLite database — persisted via Docker volume, not baked into the image
+dev.db
+dev.db-journal
+
+# Uploaded files — persisted via Docker volume
+uploads
+
+# Documentation
+*.md
+
+# Git
+.git
+.gitignore

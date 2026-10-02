@@ -1,0 +1,38 @@
+<div class="page-container">
+  <app-navbar [title]="currentView === 'mis-turnos' ? 'Mis Turnos' : currentView === 'calendario' ? 'Turnos disponibles' : 'Turnos'">
+    <!-- Botones de navegacion interna del consumidor -->
+    @if (currentView !== 'proveedores') {
+      <button class="nav-action-btn" navbar-actions (click)="onBackToProveedores()">
+        <mat-icon>store</mat-icon>
+        <span class="nav-action-label">Proveedores</span>
+      </button>
+    }
+    @if (currentView !== 'mis-turnos') {
+      <button class="nav-action-btn" navbar-actions (click)="goToMisTurnos()">
+        <mat-icon>event</mat-icon>
+        <span class="nav-action-label">Mis Turnos</span>
+      </button>
+    }
+  </app-navbar>
+
+  <div class="page-content">
+    <!-- Vistas -->
+    @if (currentView === 'proveedores') {
+      <div class="page-enter">
+        <app-consumidor-proveedores (proveedorSelected)="onSelectProveedor($event)"></app-consumidor-proveedores>
+      </div>
+    }
+
+    @if (currentView === 'calendario') {
+      <div class="page-enter">
+        <app-consumidor-calendario [proveedorId]="selectedProveedorId"></app-consumidor-calendario>
+      </div>
+    }
+
+    @if (currentView === 'mis-turnos') {
+      <div class="page-enter">
+        <app-consumidor-mis-turnos></app-consumidor-mis-turnos>
+      </div>
+    }
+  </div>
+</div>

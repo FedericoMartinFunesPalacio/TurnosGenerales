@@ -1,0 +1,24 @@
+# =============================================
+# .dockerignore — Frontend Angular
+# =============================================
+#
+# Excludes files from the Docker build context.
+# Only the source code and configs needed for
+# `ng build` are sent to the Docker daemon.
+# =============================================
+
+# Dependencies — rebuilt inside the container via npm ci
+node_modules
+
+# Compiled output — rebuilt inside the container via ng build
+dist
+
+# Angular cache — not needed in the build
+.angular
+
+# Git
+.git
+.gitignore
+
+# Documentation
+*.md

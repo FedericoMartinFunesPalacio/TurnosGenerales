@@ -1,5 +1,6 @@
 package com.FedericoFunes.app_service.dtos.user;
 
+import com.FedericoFunes.app_service.entities.Roles;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -34,5 +35,5 @@ public class RequestUserDTO {
 
     @NotBlank
     @NotNull
-    private Role role;
+    private Roles role;
 }

@@ -1,0 +1,91 @@
+// Schema de Prisma para la DB SQLite
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ==========================================
+// MODEL: Motivo
+// Biblioteca de motivos frecuentes por proveedor
+// ==========================================
+model Motivo {
+  id          Int      @id @default(autoincrement())
+  texto       String
+  proveedorId Int
+  proveedor   Usuario  @relation(fields: [proveedorId], references: [id])
+  usageCount  Int      @default(0)
+
+  turnoMotivos TurnoMotivo[]
+
+  @@unique([texto, proveedorId])
+  @@map("motivos")
+}
+
+// ==========================================
+// MODEL: TurnoMotivo
+// Relacion N:N entre Turno y Motivo (motivos disponibles en un turno)
+// ==========================================
+model TurnoMotivo {
+  id       Int    @id @default(autoincrement())
+  turnoId  Int
+  turno    Turno  @relation(fields: [turnoId], references: [id], onDelete: Cascade)
+  motivoId Int
+  motivo   Motivo @relation(fields: [motivoId], references: [id])
+
+  @@unique([turnoId, motivoId])
+  @@map("turno_motivos")
+}
+
+// ==========================================
+// MODEL: Turno
+// ==========================================
+model Turno {
+  id            Int       @id @default(autoincrement())
+  dia           DateTime
+  hora          String
+  estado        String    @default("DISPONIBLE")
+  documentoUrl  String?
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  proveedorId   Int
+  proveedor     Usuario   @relation("TurnosCreados", fields: [proveedorId], references: [id])
+
+  consumidorId  Int?
+  consumidor    Usuario?  @relation("TurnosAgendados", fields: [consumidorId], references: [id])
+
+  motivoSeleccionado String? @map("motivo_seleccionado")
+
+  fullName      String    @default("") @map("full_name")
+  email         String    @default("")
+  phone         String    @default("")
+  dni           String    @default("")
+
+  turnoMotivos  TurnoMotivo[]
+
+  @@map("turnos")
+}
+
+// ==========================================
+// MODEL: Usuario
+// ==========================================
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  apellidos String
+  password  String
+  email     String   @unique
+  phone     String
+  role      String   @default("CONSUMIDOR")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  turnosCreados   Turno[]  @relation("TurnosCreados")
+  turnosAgendados Turno[]  @relation("TurnosAgendados")
+  motivos         Motivo[]
+
+  @@map("usuarios")
+}

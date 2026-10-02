@@ -1,0 +1,55 @@
+<nav class="navbar">
+  <!-- Left: logo + page-specific actions -->
+  <div class="navbar-left">
+    <mat-icon class="navbar-logo">schedule</mat-icon>
+    <span class="navbar-title">{{ title }}</span>
+
+    <!-- Slot para acciones de la pagina (botones de navegacion interna) -->
+    <div class="navbar-actions">
+      <ng-content select="[navbar-actions]"></ng-content>
+    </div>
+  </div>
+
+  <!-- Right: profile button + dropdown -->
+  <div class="navbar-right">
+    <!-- Boton compartir (solo proveedor) -->
+    @if (showShare) {
+      <button class="share-btn" [class.copied]="shareCopied" (click)="shareClicked.emit()" title="Compartir calendario">
+        @if (shareCopied) {
+          <mat-icon class="share-icon-check">check</mat-icon>
+        } @else {
+          <mat-icon>share</mat-icon>
+        }
+        <span class="share-label">{{ shareLabel }}</span>
+      </button>
+    }
+
+    <!-- Boton perfil -->
+    <div class="profile-wrapper">
+      <button class="profile-btn" (click)="toggleDropdown()" [class.active]="dropdownOpen">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+
+      <!-- Dropdown del perfil -->
+      @if (dropdownOpen) {
+        <div class="profile-dropdown">
+          <div class="dropdown-header">
+            <div class="dropdown-avatar">
+              <mat-icon>person</mat-icon>
+            </div>
+            <div class="dropdown-info">
+              <span class="dropdown-name">{{ currentUser?.nombre }} {{ currentUser?.apellidos }}</span>
+              <span class="dropdown-email">{{ currentUser?.email }}</span>
+              <span class="dropdown-role">{{ getRoleLabel(currentUser?.role || '') }}</span>
+            </div>
+          </div>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item dropdown-logout" (click)="onLogout()">
+            <mat-icon>logout</mat-icon>
+            <span>Cerrar sesion</span>
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</nav>

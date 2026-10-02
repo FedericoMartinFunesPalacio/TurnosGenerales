@@ -1,5 +1,6 @@
 package com.FedericoFunes.app_service.dtos.user;
 
+import com.FedericoFunes.app_service.entities.Roles;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,5 +14,5 @@ import javax.management.relation.Role;
 @Builder
 public class ResponseUserDTO {
     private String username;
-    private Role role;
+    private Roles role;
 }

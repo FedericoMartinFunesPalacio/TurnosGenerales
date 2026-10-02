@@ -1,0 +1,15 @@
+@if (open) {
+  <div class="modal-backdrop" (click)="onBackdropClick($event)">
+    <div class="modal-container" [style.max-width]="maxWidth">
+      <div class="modal-header">
+        <h3 class="modal-title">{{ title }}</h3>
+        <button class="modal-close" (click)="close()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ng-content></ng-content>
+      </div>
+    </div>
+  </div>
+}

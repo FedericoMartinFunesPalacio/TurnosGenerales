@@ -1,0 +1,52 @@
+:host {
+  display: block;
+  margin-bottom: 1.5rem;
+  animation: cardEnter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  border-color: var(--border-default);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.card-title {
+  font-size: var(--text-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.card-subtitle {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin: 0.25rem 0 0 0;
+}
+
+@media (max-width: 480px) {
+  :host { margin-bottom: 1rem; }
+
+  .card-title {
+    font-size: var(--text-base);
+  }
+}

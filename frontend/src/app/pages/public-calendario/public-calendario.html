@@ -1,0 +1,201 @@
+<div class="public-page">
+  <!-- Banner login/registro -->
+  <div class="login-banner">
+    <div class="banner-content">
+      <div class="banner-text">
+        <mat-icon>person_add</mat-icon>
+        <div>
+          <span class="banner-title">Crea tu cuenta gratis</span>
+          <span class="banner-subtitle">Gestiona tus turnos de forma facil y rapida</span>
+        </div>
+      </div>
+      <div class="banner-benefits">
+        <div class="benefit">
+          <mat-icon>event_available</mat-icon>
+          <span>Historial de turnos y estados</span>
+        </div>
+        <div class="benefit">
+          <mat-icon>speed</mat-icon>
+          <span>Reserva rapida con datos auto-cargados</span>
+        </div>
+        <div class="benefit">
+          <mat-icon>storefront</mat-icon>
+          <span>Accede a todos tus proveedores</span>
+        </div>
+      </div>
+    </div>
+    <app-button variant="primary" (clicked)="goToLogin()">
+      <mat-icon style="font-size:16px;width:16px;height:16px;">login</mat-icon>
+      Iniciar sesion
+    </app-button>
+  </div>
+
+  <!-- Header del calendario -->
+  <div class="public-header">
+    <mat-icon class="header-icon">event</mat-icon>
+    <div>
+      <h1>Calendario de turnos</h1>
+      <p>{{ proveedorNombre }}</p>
+    </div>
+  </div>
+
+  @if (agendarSuccess) {
+    <app-alert type="success" message="Turno agendado exitosamente. El proveedor lo confirmara pronto."></app-alert>
+  }
+
+  <!-- Calendario -->
+  <app-card>
+    <div class="calendar-nav">
+      <app-button variant="ghost" size="sm" (clicked)="prevMonth()">
+        <mat-icon>chevron_left</mat-icon>
+      </app-button>
+      <span class="calendar-month">{{ getMonthName() }} {{ currentYear }}</span>
+      <app-button variant="ghost" size="sm" (clicked)="nextMonth()">
+        <mat-icon>chevron_right</mat-icon>
+      </app-button>
+    </div>
+
+    <div class="calendar-weekdays">
+      @for (day of weekDays; track day) {
+        <div class="weekday">{{ day }}</div>
+      }
+    </div>
+
+    <div class="calendar-grid">
+      @for (day of calendarDays; track day.date) {
+        <div class="calendar-day"
+          [style.background]="getDayBg(day)"
+          [style.color]="getDayColor(day)"
+          [style.font-weight]="day.inMonth && isToday(day) ? '600' : '400'"
+          [style.border-bottom]="day.inMonth && isToday(day) ? '2px solid var(--text-primary)' : 'none'"
+          [style.cursor]="day.inMonth ? 'pointer' : 'default'"
+          [style.opacity]="day.inMonth ? '1' : '0.3'"
+          (click)="day.inMonth && selectDay(day)">
+          {{ day.dayNumber }}
+        </div>
+      }
+    </div>
+  </app-card>
+
+  <!-- MODAL: Horarios -->
+  <app-modal [open]="showSlotModal" [title]="'Horarios — ' + formatSelectedDate()" (closed)="closeSlotModal()">
+    @if (availableTurnos.length > 0) {
+      <div class="turnos-grid" #turnosSlot>
+        @for (turno of availableTurnos; track turno.id) {
+          <div class="turno-slot" (click)="selectTurno(turno)">
+            <mat-icon class="slot-icon">schedule</mat-icon>
+            <div class="slot-info">
+              <div class="slot-time">{{ turno.hora }}</div>
+            </div>
+            <mat-icon class="slot-arrow">chevron_right</mat-icon>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty-state">
+        <mat-icon class="empty-icon">event_busy</mat-icon>
+        <p>No hay turnos disponibles para esta fecha</p>
+      </div>
+    }
+  </app-modal>
+
+  <!-- MODAL: Booking con formulario de datos -->
+  <app-modal [open]="showBookingModal" title="Reservar turno" maxWidth="500px" (closed)="closeBookingModal()">
+    @if (selectedTurno) {
+      <div class="booking-content">
+        <!-- Resumen -->
+        <div class="booking-summary">
+          <div class="summary-row">
+            <mat-icon>schedule</mat-icon>
+            <span class="summary-time">{{ selectedTurno.hora }}</span>
+            <span class="summary-date">{{ formatSelectedDate() }}</span>
+          </div>
+        </div>
+
+        <!-- Datos personales (obligatorios) -->
+        <div class="booking-section">
+          <div class="section-label">
+            <mat-icon>person</mat-icon>
+            <span>Datos personales</span>
+          </div>
+          <div class="form-row">
+            <input class="form-input" type="text" [(ngModel)]="bookingNombre" name="bookingNombre" placeholder="Nombre *" maxlength="50" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+" required>
+            <input class="form-input" type="text" [(ngModel)]="bookingApellidos" name="bookingApellidos" placeholder="Apellidos *" maxlength="50" pattern="[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+" required>
+          </div>
+          <div class="form-row">
+            <input class="form-input" type="email" [(ngModel)]="bookingEmail" name="bookingEmail" placeholder="Email *" maxlength="100" required>
+          </div>
+          <div class="form-row">
+            <input class="form-input" type="tel" [(ngModel)]="bookingPhone" name="bookingPhone" placeholder="Telefono *" maxlength="20" pattern="\d{8,15}" required>
+            <input class="form-input" type="text" [(ngModel)]="bookingDni" name="bookingDni" placeholder="DNI (opcional)" maxlength="10" pattern="\d*">
+          </div>
+        </div>
+
+        <!-- Motivo — seleccionar de los disponibles del turno -->
+        @if (getTurnoMotivos().length > 0) {
+          <div class="booking-section">
+            <div class="section-label">
+              <mat-icon>edit_note</mat-icon>
+              <span>Motivo del turno</span>
+            </div>
+            <div class="motivo-options">
+              @for (motivo of getTurnoMotivos(); track motivo) {
+                <button
+                  type="button"
+                  class="motivo-option"
+                  [class.selected]="bookingMotivosSeleccionados.includes(motivo)"
+                  (click)="toggleMotivo(motivo)">
+                  {{ motivo }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Documento -->
+        <div class="booking-section">
+          <div class="section-label">
+            <mat-icon>attach_file</mat-icon>
+            <span>Documento adjunto (opcional)</span>
+          </div>
+          <div class="file-hint">Max 5MB, JPG/PNG/PDF</div>
+
+          @if (!bookingDocumento) {
+            <label class="file-upload-area">
+              <mat-icon>cloud_upload</mat-icon>
+              <span>Seleccionar archivo</span>
+              <input type="file" accept=".jpg,.jpeg,.png,.webp,.pdf" (change)="onFileSelected($event)" hidden>
+            </label>
+          } @else {
+            <div class="file-selected">
+              <mat-icon class="file-icon">description</mat-icon>
+              <span class="file-name">{{ bookingDocumentoName }}</span>
+              <button class="file-remove" (click)="removeFile()">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          }
+        </div>
+
+        <!-- Errores -->
+        <app-alert type="error" [message]="agendarError"></app-alert>
+
+        <!-- Acciones -->
+        <div class="booking-actions">
+          <app-button variant="secondary" (clicked)="backToSlots()">
+            <mat-icon>arrow_back</mat-icon>
+            Volver
+          </app-button>
+          <app-button variant="primary" (clicked)="onAgendar()" [disabled]="isBooking">
+            @if (isBooking) {
+              <span class="spinner"></span>
+            } @else {
+              <mat-icon>check</mat-icon>
+            }
+            {{ isBooking ? 'Reservando...' : 'Reservar Turno' }}
+          </app-button>
+        </div>
+      </div>
+    }
+  </app-modal>
+</div>

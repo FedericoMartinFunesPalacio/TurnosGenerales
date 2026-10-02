@@ -1,0 +1,41 @@
+:host { display: block; }
+
+.nav-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  font-family: var(--font-family);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.nav-action-btn:hover {
+  background: var(--surface-3);
+  color: var(--text-primary);
+  border-color: var(--border-focus);
+}
+
+.nav-action-btn mat-icon {
+  font-size: 15px;
+  width: 15px;
+  height: 15px;
+}
+
+@media (max-width: 600px) {
+  .nav-action-btn {
+    padding: 5px 8px;
+    font-size: 0.72rem;
+  }
+
+  .nav-action-btn mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
+}

@@ -1,0 +1,47 @@
+:host { display: block; margin-bottom: 1rem; }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.field label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+}
+
+.field input,
+.field select,
+.field textarea {
+  background-color: var(--surface-input);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 0.5rem 0.75rem;
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-size: var(--text-base);
+  outline: none;
+  transition: border-color 150ms ease;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--border-focus);
+}
+
+.field input::placeholder {
+  color: var(--text-muted);
+}
+
+.hint {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.error {
+  font-size: var(--text-xs);
+  color: var(--state-error-text);
+}

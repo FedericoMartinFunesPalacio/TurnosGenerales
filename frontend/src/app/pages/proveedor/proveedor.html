@@ -1,0 +1,22 @@
+<div class="page-container">
+  <app-navbar
+    title="Panel del Proveedor"
+    [showShare]="true"
+    [shareLabel]="linkCopied ? 'Link copiado!' : 'Compartir'"
+    [shareCopied]="linkCopied"
+    (shareClicked)="copyShareLink()">
+
+    <button class="nav-action-btn" navbar-actions (click)="dashboard?.openTurnosModal()">
+      <mat-icon>event</mat-icon>
+      <span class="nav-action-label">Mis turnos</span>
+    </button>
+    <button class="nav-action-btn" navbar-actions (click)="dashboard?.openHistorial()">
+      <mat-icon>history</mat-icon>
+      <span class="nav-action-label">Historial</span>
+    </button>
+  </app-navbar>
+
+  <div class="page-content">
+    <app-proveedor-dashboard #dashboard></app-proveedor-dashboard>
+  </div>
+</div>

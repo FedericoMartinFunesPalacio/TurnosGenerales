@@ -1,0 +1,12 @@
+:host { display: block; margin-bottom: 1rem; }
+
+.alert {
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+}
+
+.alert-success { background: var(--state-success); color: var(--state-success-text); }
+.alert-error { background: var(--state-error); color: var(--state-error-text); }
+.alert-warning { background: var(--state-warning); color: var(--state-warning-text); }
+.alert-info { background: var(--state-info); color: var(--state-info-text); }

@@ -1,0 +1,22 @@
+<div class="proveedores-grid" #grid>
+  @for (proveedor of proveedores; track proveedor.id) {
+    <div class="card proveedor-card" (click)="selectProveedor(proveedor.id)">
+      <div class="proveedor-header">
+        <div class="proveedor-icon">
+          <mat-icon>store</mat-icon>
+        </div>
+        <div>
+          <div class="proveedor-name">{{ proveedor.nombre }} {{ proveedor.apellidos }}</div>
+          <div class="proveedor-email">{{ proveedor.email }}</div>
+        </div>
+      </div>
+      <div class="proveedor-phone">Tel: {{ proveedor.phone }}</div>
+      <div class="proveedor-link">
+        Ver turnos disponibles
+        <mat-icon style="font-size:16px;width:16px;height:16px;">arrow_forward</mat-icon>
+      </div>
+    </div>
+  } @empty {
+    <div class="empty-state">No hay proveedores disponibles</div>
+  }
+</div>

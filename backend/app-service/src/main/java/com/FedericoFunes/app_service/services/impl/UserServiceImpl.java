@@ -29,21 +29,11 @@ public class UserServiceImpl implements UserService {
         userEntity.setPassword(requestUserDTO.getPassword());
         userEntity.setEmail(requestUserDTO.getEmail());
         userEntity.setPhone(requestUserDTO.getPhone());
-        for(Roles role : Roles.values()) {
-            if(role.equals(Roles.ADMIN)) {
-                throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Cannot assign admin role");
-            }
-
-            if (role.toString().equals(requestUserDTO.getRole().toString())) {
-                userEntity.setRole(requestUserDTO.getRole());
-                break;
-            }
-            else {
-                //ROL NO EXISTENTE
-                //LANZAR ERROR
-                throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Role not found");
-            }
+        if(requestUserDTO.getRole().equals(Roles.ADMIN)) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(403), "Cannot assign admin role");
         }
+        userEntity.setRole(requestUserDTO.getRole());
+
 
         userRepository.save(userEntity);
 
