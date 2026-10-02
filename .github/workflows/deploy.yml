@@ -1,0 +1,65 @@
+name: Deploy a GitHub Pages (rama deploy)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Necesita permiso de escritura para pushear la rama "deploy".
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Determinar base href
+        id: base
+        # La URL de Pages se calcula sola del nombre del repositorio:
+        #   https://<usuario>.github.io/<repositorio>/
+        # Con dominio propio (frontend/public/CNAME) o en un sitio de usuario
+        # (<usuario>.github.io) se usa "/".
+        run: |
+          repo="${GITHUB_REPOSITORY#*/}"
+          owner="${GITHUB_REPOSITORY_OWNER}"
+          if [ -f public/CNAME ] || [ "$repo" = "$owner.github.io" ]; then
+            echo "href=/" >> "$GITHUB_OUTPUT"
+          else
+            echo "href=/$repo/" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build de producción
+        run: npm run build -- --configuration production --base-href "${{ steps.base.outputs.href }}"
+
+      - name: Publicar build en la rama deploy
+        # Toma dist/frontend/browser y lo deja en la raíz de la rama "deploy".
+        run: |
+          cd dist/frontend/browser
+          git init -b deploy
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Deploy de ${{ github.sha }}"
+          git push --force \
+            "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" \
+            HEAD:deploy
