@@ -33,15 +33,24 @@ RUN npm ci
 COPY prisma7.config.ts ./
 COPY prisma ./prisma
 
+# IMPORTANTE: tsconfig.json y el codigo fuente se copian ANTES de
+# `prisma generate`. El generator lee el tsconfig del proyecto para
+# decidir como escribe los imports del cliente generado:
+#   - con tsconfig  -> importa con extension .js (lo espera tsc/node)
+#   - sin tsconfig  -> importa con extension .ts (Error
+#                      ERR_MODULE_NOT_FOUND en runtime)
+# Tambien sirve para que el cliente generado quede en src/generated
+# sin ser pisado por un COPY posterior.
+COPY tsconfig.json ./
+COPY src ./src
+
 # URL de placeholder SOLO para `prisma generate` en build time
 # (generate no conecta a la DB, solo necesita que la variable exista).
 # La URL real la inyecta Render en RUNTIME, no en build.
 ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/build"
 RUN npx prisma generate
 
-# Compilo TypeScript -> dist/
-COPY tsconfig.json ./
-COPY src ./src
+# Compilo TypeScript -> dist/ (incluye src/generated)
 RUN npm run build
 
 # ----- Stage 2: Produccion -----
