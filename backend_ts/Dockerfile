@@ -67,6 +67,11 @@ RUN npm ci --omit=dev
 COPY prisma7.config.ts ./
 COPY prisma ./prisma
 
+# Certificado CA (Supabase: prod-ca-2021.crt) para conectar con
+# sslmode=verify-full. La DATABASE_URL de Render apunta a
+# /app/cert/prod-ca-2021.crt, por eso debe estar dentro de la imagen.
+COPY cert ./cert
+
 # Codigo compilado (incluye el cliente Prisma generado en src/generated)
 COPY --from=build /app/dist ./dist
 
