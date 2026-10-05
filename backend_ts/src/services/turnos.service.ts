@@ -4,6 +4,7 @@ import * as turnoRepository from "../repositories/turnos.repository.js";
 import * as usuarioRepository from "../repositories/usuarios.repository.js";
 import * as motivosService from "../services/motivos.service.js";
 import * as emailService from "./email.service.js";
+import * as storageService from "./storage.service.js";
 import { AppError } from "../middlewares/error.handler.js";
 
 function getFullName(user: { nombre?: string; apellidos?: string } | null): string {
@@ -186,5 +187,19 @@ export async function cancelarTurno(turnoId: number): Promise<Turno> {
 export async function deleteTurno(id: number): Promise<void> {
   const turno = await turnoRepository.findTurnoById(id);
   if (!turno) throw new AppError("Turno no encontrado", 404);
+
+  // Si el turno tenia un documento, borramos el objeto del bucket.
+  // best-effort: si falla, no bloqueamos el delete — el cleanup diario lo retira.
+  if (turno.documentoUrl) {
+    const nombre = storageService.extraerNombreArchivo(turno.documentoUrl);
+    if (nombre) {
+      try {
+        await storageService.eliminarDocumento(nombre);
+      } catch (e) {
+        console.error("No se pudo borrar el documento del bucket:", e);
+      }
+    }
+  }
+
   await turnoRepository.deleteTurno(id);
 }

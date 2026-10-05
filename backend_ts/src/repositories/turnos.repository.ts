@@ -111,3 +111,15 @@ export async function findTurnoByDiaAndHora(
     where: { dia, hora, proveedorId },
   });
 }
+
+// Todas las documentoUrl no nulas de la tabla turnos.
+// Lo usa el cleanup de storage para saber que archivos del bucket son intocables
+export async function findAllDocumentoUrls(): Promise<string[]> {
+  const filas = await prisma.turno.findMany({
+    where: { documentoUrl: { not: null } },
+    select: { documentoUrl: true },
+  });
+  return filas
+    .map((f) => f.documentoUrl)
+    .filter((u): u is string => u !== null && u !== "");
+}

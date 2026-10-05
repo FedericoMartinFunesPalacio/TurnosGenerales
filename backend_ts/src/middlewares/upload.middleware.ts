@@ -1,30 +1,15 @@
 // Middleware de Upload con Multer
 // Multer procesa archivos multipart/form-data (subida de imagenes/documentos)
-// Los archivos se guardan en la carpeta /uploads con un nombre unico
+//
+// Usamos memoryStorage: el archivo queda en RAM como req.file.buffer y luego
+// el controller lo sube a Supabase Storage. NO escribimos en disco porque
+// el disco de Render (plan gratis) es efimero: todo lo que se guarde ahi
+// se borra en cada sleep/redeploy.
+// El maximo de 5MB hace que mantener el archivo en memoria no sea problema.
 import multer from "multer";
-import path from "path";
-import { fileURLToPath } from "url";
 
-// __dirname equivalent para ESM
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Carpeta donde se guardan los archivos subidos
-const UPLOADS_DIR = path.join(__dirname, "../../uploads");
-
-// Configuracion de almacenamiento
-const storage = multer.diskStorage({
-  // Destination: donde guardar el archivo
-  destination: (_req, _file, cb) => {
-    cb(null, UPLOADS_DIR);
-  },
-  // Filename: como nombrar el archivo (evita colisiones con timestamp + random)
-  filename: (_req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname); // .jpg, .pdf, etc.
-    cb(null, `doc-${uniqueSuffix}${ext}`);
-  },
-});
+// El archivo se queda en memoria (req.file.buffer)
+const storage = multer.memoryStorage();
 
 // Filtro de archivos: solo permitir imagenes y PDFs
 const fileFilter = (
