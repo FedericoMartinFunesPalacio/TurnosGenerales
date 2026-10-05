@@ -87,17 +87,17 @@ export async function agendarTurno(
     });
 
     const proveedor = await usuarioRepository.findUsuarioById(turno.proveedorId);
-    if (proveedor && proveedor.email) {
-      try {
-        await emailService.enviarEmailTurnoAgendado(
-          proveedor.email,
+    const emailProveedor = proveedor?.email;
+    if (emailProveedor) {
+      // Encolado: la respuesta NO espera los ~4-25s del SMTP de Gmail
+      emailService.encolarEmail(() =>
+        emailService.enviarEmailTurnoAgendado(
+          emailProveedor,
           getFullName(proveedor),
           fullName,
           { motivo: motivoSeleccionado || "Sin motivo", dia: new Date(turno.dia), hora: turno.hora }
-        );
-      } catch (error) {
-        console.error("Error enviando email al proveedor:", error);
-      }
+        )
+      );
     }
 
     return turnoActualizado;
@@ -120,17 +120,17 @@ export async function agendarTurno(
   });
 
   const proveedor = await usuarioRepository.findUsuarioById(turno.proveedorId);
-  if (proveedor && proveedor.email) {
-    try {
-      await emailService.enviarEmailTurnoAgendado(
-        proveedor.email,
+  const emailProveedor = proveedor?.email;
+  if (emailProveedor) {
+    // Encolado: la respuesta NO espera los ~4-25s del SMTP de Gmail
+    emailService.encolarEmail(() =>
+      emailService.enviarEmailTurnoAgendado(
+        emailProveedor,
         getFullName(proveedor),
         getFullName(consumidor),
         { motivo: motivoSeleccionado || "Sin motivo", dia: new Date(turno.dia), hora: turno.hora }
-      );
-    } catch (error) {
-      console.error("Error enviando email al proveedor:", error);
-    }
+      )
+    );
   }
 
   return turnoActualizado;
@@ -143,18 +143,18 @@ export async function confirmarTurno(turnoId: number): Promise<Turno> {
 
   const turnoConfirmado = await turnoRepository.updateTurnoEstado(turnoId, "CONFIRMADO");
 
-  if (turno.email) {
-    try {
+  const emailConsumidor = turno.email;
+  if (emailConsumidor) {
+    // Encolado: la respuesta NO espera los ~4-25s del SMTP de Gmail
+    emailService.encolarEmail(async () => {
       const proveedor = await usuarioRepository.findUsuarioById(turno.proveedorId);
       await emailService.enviarEmailTurnoConfirmado(
-        turno.email,
+        emailConsumidor,
         turno.fullName || "Consumidor",
         getFullName(proveedor),
         { motivo: turno.motivoSeleccionado || "Sin motivo", dia: new Date(turno.dia), hora: turno.hora }
       );
-    } catch (error) {
-      console.error("Error enviando email al consumidor:", error);
-    }
+    });
   }
 
   return turnoConfirmado;
@@ -167,18 +167,18 @@ export async function cancelarTurno(turnoId: number): Promise<Turno> {
 
   const turnoCancelado = await turnoRepository.updateTurnoEstado(turnoId, "CANCELADO");
 
-  if (turno.email) {
-    try {
+  const emailConsumidor = turno.email;
+  if (emailConsumidor) {
+    // Encolado: la respuesta NO espera los ~4-25s del SMTP de Gmail
+    emailService.encolarEmail(async () => {
       const proveedor = await usuarioRepository.findUsuarioById(turno.proveedorId);
       await emailService.enviarEmailTurnoCancelado(
-        turno.email,
+        emailConsumidor,
         turno.fullName || "Consumidor",
         getFullName(proveedor),
         { motivo: turno.motivoSeleccionado || "Sin motivo", dia: new Date(turno.dia), hora: turno.hora }
       );
-    } catch (error) {
-      console.error("Error enviando email al consumidor:", error);
-    }
+    });
   }
 
   return turnoCancelado;

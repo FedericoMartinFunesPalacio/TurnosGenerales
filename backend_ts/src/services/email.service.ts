@@ -26,9 +26,43 @@ function getTransporter(): Transporter {
         user: getEnvVariable("EMAIL_USER"),     // Email del remitente
         pass: getEnvVariable("EMAIL_PASS"),     // App Password de Google (16 caracteres)
       },
+      // Timeouts: si Gmail no responde, cortamos en vez de dejar
+      // la conexion (y la cola) colgada indefinidamente
+      connectionTimeout: 15000,  // conectar por TCP
+      greetingTimeout: 15000,    // el saludo del servidor
+      socketTimeout: 60000,      // inactividad durante la conversacion
     });
   }
   return transporter;
+}
+
+// ==========================================
+// COLA DE ENVIO ASINCRONO
+// ==========================================
+// Los emails NO se envian dentro de la peticion HTTP (eso la bloqueaba
+// varios segundos esperando el handshake SMTP de Gmail). En su lugar,
+// la peticion "encola" la tarea y responde YA, mientras el envio ocurre
+// en segundo plano.
+//
+// La cola encadena las tareas (una por vez):
+//  - mantiene el orden de envio
+//  - no abre N conexiones SMTP simultaneas
+//  - si un envio falla, lo loguea y NO rompe la cola ni la peticion
+//
+// Limitacion aceptada: es memoria del proceso. Si Render reinicia el
+// server con mails encolados, esos mails se pierden (es solo notificacion).
+let cola: Promise<void> = Promise.resolve();
+
+export function encolarEmail(tarea: () => Promise<void>): void {
+  cola = cola
+    .then(async () => {
+      const inicio = Date.now();
+      await tarea();
+      console.log(`[Email] enviado OK en ${Date.now() - inicio} ms`);
+    })
+    .catch((error) => {
+      console.error("[Email] Error enviando email:", error);
+    });
 }
 
 // ==========================================
