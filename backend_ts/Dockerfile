@@ -19,7 +19,10 @@
 # =============================================
 
 # ----- Stage 1: Build -----
-FROM node:20-alpine AS build
+# Node 22+ (LTS): @supabase/supabase-js requiere el WebSocket global nativo
+# que Node trae recien desde la v22. Con node:20 la subida de documentos
+# fallaba con "Node.js detected but native WebSocket not found".
+FROM node:22-alpine AS build
 WORKDIR /app
 
 # Copio los manifests de dependencias primero -> mejor cacheo de capas.
@@ -54,7 +57,8 @@ RUN npx prisma generate
 RUN npm run build
 
 # ----- Stage 2: Produccion -----
-FROM node:20-alpine
+# Mismo motivo que arriba: Node 22+ por el WebSocket nativo de supabase-js
+FROM node:22-alpine
 WORKDIR /app
 
 # Solo dependencias de produccion (imagen mas chica)
